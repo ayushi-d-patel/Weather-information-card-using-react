@@ -3,6 +3,7 @@
     "node": "20.14.0"
   },
   "scripts": {
+  "start": "node server.js",
   "dev": "vite",
   "build": "vite build",
   "preview": "vite preview"
