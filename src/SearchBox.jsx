@@ -8,30 +8,41 @@ export default function SearchBox({updateInfo}){
     let [city, setCity] = useState("");
     let [error, setError] = useState(false);
 
-    const API_URL=process.env.VITE_APP_API_URL;
-    const API_KEY=process.env.VITE_APP_API_KEY;
+    const VITE_API_URL=import.meta.env.VITE_API_URL;
+    const VITE_API_KEY=import.meta.env.VITE_API_KEY;
+
+console.log("API URL:", import.meta.env.VITE_API_URL);
+console.log("API KEY:", import.meta.env.VITE_API_KEY);
 
 
-    let getWeatherInfo=async ()=>{
-        try{
-            let response=await fetch(`${API_URL}?q=${city}&appid=${API_KEY}&units=metric`);
-        let jsonResponse=await response.json();
-        let result={
-            city:city,
-            temp: jsonResponse.main.temp,
-            tempMin: jsonResponse.main.temp_min,
-            tempMax: jsonResponse.main.temp_max,
-            humidity:jsonResponse.main.humidity,
-            feelsLike:jsonResponse.main.feels_like,
-            weather:jsonResponse.weather[0].description
-        };
-        console.log(result);
-        return result;
-        }catch(err){
-            throw err;
-        }
-        
+    let getWeatherInfo = async () => {
+  try {
+    let response = await fetch(`${VITE_API_URL}?q=${city}&appid=${VITE_API_KEY}&units=metric`);
+    if (!response.ok) {
+      // e.g., 404 city not found, etc.
+      setError(true);
+      return null;  // or throw new Error("City not found");
+    }
+    let jsonResponse = await response.json();
+    let result = {
+      city: city,
+      temp: jsonResponse.main.temp,
+      tempMin: jsonResponse.main.temp_min,
+      tempMax: jsonResponse.main.temp_max,
+      humidity: jsonResponse.main.humidity,
+      feelsLike: jsonResponse.main.feels_like,
+      weather: jsonResponse.weather[0].description
     };
+    console.log(result);
+    setError(false);  // reset error if successful
+    return result;
+  } catch (err) {
+    console.error("API call failed:", err);
+    setError(true);
+    return null;
+  }
+};
+
 
 
     let handleChange=(e)=>{
